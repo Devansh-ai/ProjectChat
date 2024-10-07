@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, Dimensions, Image, TouchableOpacity, TextInput } from 'react-native'
 import React, { useState, useRef } from 'react'
-import { GiftedChat,  } from 'react-native-gifted-chat'
+import { GiftedChat, IMessage, Bubble } from 'react-native-gifted-chat'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import ChatModal from '../Components/ChatModal';
 import { useRoute } from '@react-navigation/native';
@@ -10,29 +10,36 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import ChatModalLongPress from '../Components/chatModalLongPress';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-interface Item  {
+interface Item {
     image?: string;
-    _id:number,
-    text?:string,
-    createdAt:any,
-    user:{
-        _id:number,
-        name:string,
+    _id: number,
+    text?: string,
+    createdAt: any,
+    user: {
+        _id: number,
+        name: string,
     }
 }
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 
-const Chat = ({navigation}:{navigation:any}) => {
+interface ItemInError {
+    error: any
+    didCancel: any
+    assets: any
+}
+
+const Chat = ({ navigation }: { navigation: any }) => {
     let STORAGE_KEY = '@user_input';
 
     const uploadImageFromGallery = () => {
         launchImageLibrary({ mediaType: 'photo' }, (res) => {
-            if (res.didCancel) {
+            const { didCancel, error } = res as ItemInError
+            if (didCancel) {
                 console.log("User cancelled image picker");
-            } else if (res.error) {
-                console.log('ImagePicker Error: ', res.error);
+            } else if (error) {
+                console.log('ImagePicker Error: ', error);
             } else if (res.assets && res.assets[0].uri) {
                 console.log("Gallery Allowed");
                 const imageUri = res.assets[0].uri;
@@ -51,9 +58,9 @@ const Chat = ({navigation}:{navigation:any}) => {
             }
         });
     };
-    
+
     const route = useRoute();
-    const { name, initials } = route.params;
+    const { name, initials } = route.params as { name: string, initials: string };
     const [msgs, setMsgs] = useState<Item[]>([
         {
             _id: 1,
@@ -96,13 +103,48 @@ const Chat = ({navigation}:{navigation:any}) => {
             messageIdCounter.current += 1;
         }
     };
+    const renderBubble = (props) => {
+        return (
+            <Bubble
+                {...props}
+                // tickStyle={{
+                //     left:{
+                //         color:'blue',
+                //     },
+                //     right:{
 
+                //         color:'blue'
+                //     }
+                // }}
+                wrapperStyle={{
+                    left: {
+                        backgroundColor: 'white',
+                        //borderRadius: 20,
+                        padding: 5,
+                        borderBottomRightRadius: 15,
+                        borderBottomLeftRadius: 15,
+                        borderTopRightRadius: 15,
+                        borderTopLeftRadius: 0,
+                    },
+                    right: {
+                        borderBottomRightRadius: 0,
+                        borderBottomLeftRadius: 15,
+                        borderTopRightRadius: 15,
+                        borderTopLeftRadius: 15,
+
+                        padding: 5,
+                        backgroundColor: "#297dbc",
+                    },
+                }}
+            />
+        );
+    };
     const textInput = () => {
         return (
             <View style={styles.header}>
-                <TouchableOpacity 
-                
-              //  onPress={uploadImageFromGallery}
+                <TouchableOpacity
+
+                //  onPress={uploadImageFromGallery}
                 >
                     <Image
                         source={Icons.upload}
@@ -140,7 +182,7 @@ const Chat = ({navigation}:{navigation:any}) => {
                     <Text style={styles.nameHeader}>{name}</Text>
                     <Text style={styles.chatSubheading}>{stringsMenu.chatSubheading}</Text>
                 </View>
-                <TouchableOpacity onPress={() =>  {setchatmodal(true)}} >
+                <TouchableOpacity onPress={() => { setchatmodal(true) }} >
                     <Image
                         source={Icons.options}
                         style={styles.optionsButton}
@@ -150,11 +192,12 @@ const Chat = ({navigation}:{navigation:any}) => {
             <View style={styles.giftedChatHeader}>
                 <GiftedChat
                     messages={msgs}
+                    renderBubble={renderBubble}
                     alwaysShowSend={true}
                     alignTop={true}
                     onLongPress={() => { setchatmodallongpress(true) }}
-                    onSend={(messages) => {
-                        setMsgs((prev) => GiftedChat.append(prev, messages as Item[]))
+                    onSend={(messages: IMessage[]) => {
+                        setMsgs((prev: any) => GiftedChat.append(prev, messages as Item[]))
                     }}
                     user={{
                         _id: 1
@@ -221,13 +264,13 @@ const styles = StyleSheet.create({
         marginRight: 10,
         marginLeft: 20,
         alignSelf: 'flex-end',
-        borderRadius:8,
+        borderRadius: 8,
     },
     backIcon: {
         height: 25,
         width: 25,
         alignSelf: 'center',
-        marginTop:5,
+        marginTop: 5,
     },
     header: {
         flexDirection: 'row',

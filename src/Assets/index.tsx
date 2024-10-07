@@ -9,7 +9,7 @@ const Icons = {
     menuUnSelected: require('./Icons/MenuUnselcted.png'),
     backArrow:require('./Icons/backArrow.png'),
     add:require('./Icons/add.png'),
-    back:require('./Icons/back1.png'),
+    back:require('./Icons/backIcon.png'),
     search:require('./Icons/search.png'),
     newChat:require('./Icons/newChat.png'),
     grpChat:require('./Icons/grpChat.png'),

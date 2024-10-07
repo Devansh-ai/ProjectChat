@@ -8,6 +8,7 @@ import {
     TextInput,
     TouchableOpacity,
     Image,
+    Dimensions,
 } from 'react-native';
 import Data from '../Utils/Data.json';
 import { Icons, Images } from '../Assets/';
@@ -19,6 +20,8 @@ interface Item {
     profileImage: string;
 
 }
+const SCREEN_HEIGHT=Dimensions.get('window').height;
+const SCREEN_WIDTH=Dimensions.get('window').width;
 
 const Search = ({ navigation }: { navigation: any }) => {
     const [searchQuery, setSearchQuery] = useState<string>('');
@@ -49,15 +52,17 @@ const Search = ({ navigation }: { navigation: any }) => {
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.navigate('BottomTab')}>
-                    <Image style={styles.back} source={Icons.back} />
+                    <Image style={styles.back} source={Icons.backArrow} />
                 </TouchableOpacity>
                 <View style={styles.input}>
-                    <Image source={Icons.search} />
+                    <Image source={Icons.search}
+                    style={styles.searchImg}
+                    />
                     <TextInput
                         placeholder="Search here..."
                         value={searchQuery}
-                        onChangeText={(text: string) => setSearchQuery(text)} // Explicitly define the type
-                        style={{ flex: 1 }} // Ensure TextInput expands to fill available space
+                        onChangeText={(text: string) => setSearchQuery(text)} 
+                        style={{ flex: 1 }} 
                     />
                 </View>
             </View>
@@ -92,10 +97,15 @@ const styles = StyleSheet.create({
     back: {
         height: 40,
         width: 40,
-        backgroundColor: 'white',
-        tintColor: 'grey',
+       // backgroundColor: 'white',
+        //tintColor: 'grey',
         marginHorizontal: 16,
         marginVertical: 19,
+    },
+    searchImg:{
+        height:20,
+        width:20,
+
     },
     input: {
         flex: 1,
@@ -103,7 +113,7 @@ const styles = StyleSheet.create({
         marginRight: 16,
         backgroundColor: 'white',
         borderRadius: 8,
-        paddingLeft: 16,
+        paddingLeft: 10,
         flexDirection: 'row',
         alignItems: 'center',
     },
@@ -128,13 +138,13 @@ const styles = StyleSheet.create({
     profileImg: {
         width: '100%',
         height: '100%',
-        borderRadius: 50,
-        paddingLeft: 10,
-        paddingTop: 11,
+        //borderRadius: 50,
+        paddingLeft: 11,
+        paddingTop: 12,
         color: 'white',
-        fontWeight: '500',
+        fontWeight: '700',
         //justifyContent:'center',
-        alignSelf: 'center'
+       // alignSelf: 'center'
     },
     text: {
         fontWeight: '600',
@@ -153,8 +163,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     noResultsimg: {
-        width: 269,
-        height: 166,
+        width: SCREEN_WIDTH*.42,
+        height: SCREEN_HEIGHT*.4,
         resizeMode: 'contain',
     },
 });
