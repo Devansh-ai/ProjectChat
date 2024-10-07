@@ -4,6 +4,9 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+<string>We need access to your photo library to upload images.</string>
+
 	<key>CFBundleDisplayName</key>
 	<string>ProjectChat</string>
 	<key>CFBundleExecutable</key>
