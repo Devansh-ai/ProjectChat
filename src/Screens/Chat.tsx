@@ -140,7 +140,7 @@ const Chat = ({navigation}:{navigation:any}) => {
                     <Text style={styles.nameHeader}>{name}</Text>
                     <Text style={styles.chatSubheading}>{stringsMenu.chatSubheading}</Text>
                 </View>
-                <TouchableOpacity onPress={() => { setchatmodal(true) }} >
+                <TouchableOpacity onPress={() =>  setchatmodal(true)} >
                     <Image
                         source={Icons.options}
                         style={styles.optionsButton}
