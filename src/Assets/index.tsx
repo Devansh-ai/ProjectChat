@@ -30,7 +30,6 @@ const Icons = {
     emoji3:require('./Icons/emoji3.png'),
     emoji4:require('./Icons/emoji4.png'),
     emoji5:require('./Icons/emoji5.png'),
-    //search:require('./Icons/magnifying-glass.png')
 
 };
 const Images = {

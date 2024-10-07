@@ -15,7 +15,7 @@ const ChatModal = ({ visible, ondismiss }: { visible: any, ondismiss: any }) => 
                 transparent={true}
                 animationType="slide"
                 visible={visible}
-            // onRequestClose={this.toggleModal}
+
 
             >
                 <Pressable onPress={toggleModal} style={styles.container} >

@@ -155,6 +155,7 @@ const Chat = ({ navigation }: { navigation: any }) => {
                     style={styles.textInputStyle}
                     value={inputText}
                     onChangeText={setInputText}
+                    onSubmitEditing={handleSend}
                 />
                 <TouchableOpacity onPress={handleSend}>
                     <Image
@@ -192,7 +193,12 @@ const Chat = ({ navigation }: { navigation: any }) => {
             <View style={styles.giftedChatHeader}>
                 <GiftedChat
                     messages={msgs}
+                    //scrollToBottom={true}
+                    loadEarlier={true}
+                   // isLoadingEarlier={true}
                     renderBubble={renderBubble}
+                    //isTyping={true}
+                    renderUsernameOnMessage={true}
                     alwaysShowSend={true}
                     alignTop={true}
                     onLongPress={() => { setchatmodallongpress(true) }}

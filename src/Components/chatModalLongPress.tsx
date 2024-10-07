@@ -15,7 +15,7 @@ const ChatModalLongPress = ({ visible, ondismiss }: { visible: any, ondismiss: a
                 transparent={true}
                 animationType="slide"
                 visible={visible}
-            // onRequestClose={this.toggleModal}
+
 
             >
                 <Pressable onPress={toggleModal} style={styles.container} >
