@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1010361536497",
+    "project_id": "projectchat-1329a",
+    "storage_bucket": "projectchat-1329a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1010361536497:android:e5c2db22dc5ad705a3be50",
+        "android_client_info": {
+          "package_name": "org.reactjs.native.example.ProjectChat"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCC1dvNnkuOyK_OZs2iIY8akTp1emmoDvY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

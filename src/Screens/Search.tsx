@@ -39,7 +39,7 @@ const Search = ({ navigation }: { navigation: any }) => {
     }, [searchQuery]);
 
     const renderItem = ({ item }: { item: Item }) => (
-        <TouchableOpacity style={styles.flatlist} onPress={() => navigation.navigate('Chat', { name: item.name, initials: item.profileImage })}>
+        <TouchableOpacity style={styles.flatlist} onPress={() => navigation.navigate('Chat', { name: item.name, initials: item.profileImage, id:item.id })}>
             <View style={styles.imageStyle}>
                 <Text style={styles.profileImg} >{item.profileImage}
                 </Text>

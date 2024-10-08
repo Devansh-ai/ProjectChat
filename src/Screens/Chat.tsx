@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, Dimensions, Image, TouchableOpacity, TextInput } from 'react-native'
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { GiftedChat, IMessage, Bubble } from 'react-native-gifted-chat'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import ChatModal from '../Components/ChatModal';
@@ -31,7 +31,52 @@ interface ItemInError {
 }
 
 const Chat = ({ navigation }: { navigation: any }) => {
-    let STORAGE_KEY = '@user_input';
+    const route = useRoute();
+    const { name, initials, id } = route.params as { name: string, initials: string, id: number };
+    const STORAGE_KEY = `@chat_messages_${id}`;
+
+    const [msgs, setMsgs] = useState<Item[]>([]);
+    const [chatmodal, setchatmodal] = useState(false);
+
+    const [chatmodallongpress, setchatmodallongpress] = useState(false);
+    const [inputText, setInputText] = useState('');
+    const messageIdCounter = useRef(2);
+
+    useEffect(() => {
+        loadMessages();
+    }, []);
+
+    const loadMessages = async () => {
+        try {
+            const storedMessages = await AsyncStorage.getItem(STORAGE_KEY);
+            if (storedMessages !== null) {
+                setMsgs(JSON.parse(storedMessages));
+                messageIdCounter.current = JSON.parse(storedMessages).length + 1;
+            } else {
+                setMsgs([
+                    {
+                        _id: 1,
+                        text: "Hello developer",
+                        createdAt: new Date(),
+                        user: {
+                            _id: 2,
+                            name: "React Native",
+                        }
+                    }
+                ]);
+            }
+        } catch (e) {
+            console.error('Failed to load messages:', e);
+        }
+    };
+
+    const saveMessages = async (messages: Item[]) => {
+        try {
+            await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+        } catch (e) {
+            console.error('Failed to save messages:', e);
+        }
+    };
 
     const uploadImageFromGallery = () => {
         launchImageLibrary({ mediaType: 'photo' }, (res) => {
@@ -50,34 +95,15 @@ const Chat = ({ navigation }: { navigation: any }) => {
                     user: {
                         _id: 1,
                         name: "User",
-
                     }
                 };
-                setMsgs(previousMsgs => GiftedChat.append(previousMsgs, [newImageMsg]));
+                const updatedMsgs = GiftedChat.append(msgs, [newImageMsg]);
+                setMsgs(updatedMsgs);
+                saveMessages(updatedMsgs);
                 messageIdCounter.current += 1;
             }
         });
     };
-
-    const route = useRoute();
-    const { name, initials } = route.params as { name: string, initials: string };
-    const [msgs, setMsgs] = useState<Item[]>([
-        {
-            _id: 1,
-            text: "Hello developer",
-            createdAt: new Date(),
-            user: {
-                _id: 2,
-                name: "React Native",
-
-            }
-        }
-    ]);
-    const [chatmodal, setchatmodal] = useState(false);
-    const [input, setInput] = useState('');
-    const [chatmodallongpress, setchatmodallongpress] = useState(false);
-    const [inputText, setInputText] = useState('');
-    const messageIdCounter = useRef(2);
 
     const togglemodal = () => {
         setchatmodal(!chatmodal)
@@ -98,28 +124,21 @@ const Chat = ({ navigation }: { navigation: any }) => {
                     avatar: "https://placeimg.com/140/140/any"
                 }
             };
-            setMsgs(previousMsgs => GiftedChat.append(previousMsgs, [newMsg]));
+            const updatedMsgs = GiftedChat.append(msgs, [newMsg]);
+            setMsgs(updatedMsgs);
+            saveMessages(updatedMsgs);
             setInputText('');
             messageIdCounter.current += 1;
         }
     };
+
     const renderBubble = (props) => {
         return (
             <Bubble
                 {...props}
-                // tickStyle={{
-                //     left:{
-                //         color:'blue',
-                //     },
-                //     right:{
-
-                //         color:'blue'
-                //     }
-                // }}
                 wrapperStyle={{
                     left: {
                         backgroundColor: 'white',
-                        //borderRadius: 20,
                         padding: 5,
                         borderBottomRightRadius: 15,
                         borderBottomLeftRadius: 15,
@@ -131,7 +150,6 @@ const Chat = ({ navigation }: { navigation: any }) => {
                         borderBottomLeftRadius: 15,
                         borderTopRightRadius: 15,
                         borderTopLeftRadius: 15,
-
                         padding: 5,
                         backgroundColor: "#297dbc",
                     },
@@ -139,13 +157,11 @@ const Chat = ({ navigation }: { navigation: any }) => {
             />
         );
     };
+
     const textInput = () => {
         return (
             <View style={styles.header}>
-                <TouchableOpacity
-
-                //  onPress={uploadImageFromGallery}
-                >
+                <TouchableOpacity onPress={uploadImageFromGallery}>
                     <Image
                         source={Icons.upload}
                         style={styles.backIcon}
@@ -193,17 +209,15 @@ const Chat = ({ navigation }: { navigation: any }) => {
             <View style={styles.giftedChatHeader}>
                 <GiftedChat
                     messages={msgs}
-                    //scrollToBottom={true}
                     loadEarlier={true}
-                   // isLoadingEarlier={true}
                     renderBubble={renderBubble}
-                    //isTyping={true}
                     renderUsernameOnMessage={true}
-                    alwaysShowSend={true}
                     alignTop={true}
                     onLongPress={() => { setchatmodallongpress(true) }}
                     onSend={(messages: IMessage[]) => {
-                        setMsgs((prev: any) => GiftedChat.append(prev, messages as Item[]))
+                        const updatedMsgs = GiftedChat.append(msgs, messages as Item[]);
+                        setMsgs(updatedMsgs);
+                        saveMessages(updatedMsgs);
                     }}
                     user={{
                         _id: 1
@@ -224,6 +238,7 @@ const Chat = ({ navigation }: { navigation: any }) => {
     )
 }
 
+export default Chat
 export default Chat
 
 const styles = StyleSheet.create({
