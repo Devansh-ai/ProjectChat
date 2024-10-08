@@ -16,6 +16,7 @@ interface Item {
     text?: string,
     createdAt: any,
     user: {
+        avatar?:string,
         _id: number,
         name: string,
     }
@@ -35,10 +36,10 @@ const Chat = ({ navigation }: { navigation: any }) => {
     const { name, initials, id } = route.params as { name: string, initials: string, id: number };
     const STORAGE_KEY = `@chat_messages_${id}`;
 
-    const [msgs, setMsgs] = useState<Item[]>([]);
-    const [chatmodal, setchatmodal] = useState(false);
+    const [msgs, setMsgs] = useState<IMessage[]>([]);
+    const [chatModal, setChatModal] = useState(false);
 
-    const [chatmodallongpress, setchatmodallongpress] = useState(false);
+    const [chatModalLongPress, setChatModalLongPress] = useState(false);
     const [inputText, setInputText] = useState('');
     const messageIdCounter = useRef(2);
 
@@ -88,7 +89,8 @@ const Chat = ({ navigation }: { navigation: any }) => {
             } else if (res.assets && res.assets[0].uri) {
                 console.log("Gallery Allowed");
                 const imageUri = res.assets[0].uri;
-                const newImageMsg: Item = {
+                const newImageMsg: IMessage = {
+                    text:'',
                     _id: messageIdCounter.current,
                     createdAt: new Date(),
                     image: imageUri,
@@ -97,7 +99,7 @@ const Chat = ({ navigation }: { navigation: any }) => {
                         name: "User",
                     }
                 };
-                const updatedMsgs = GiftedChat.append(msgs, [newImageMsg]);
+                const updatedMsgs:any = GiftedChat.append(msgs, [newImageMsg]);
                 setMsgs(updatedMsgs);
                 saveMessages(updatedMsgs);
                 messageIdCounter.current += 1;
@@ -105,16 +107,16 @@ const Chat = ({ navigation }: { navigation: any }) => {
         });
     };
 
-    const togglemodal = () => {
-        setchatmodal(!chatmodal)
+    const toggleModal = () => {
+        setChatModal(!chatModal)
     }
-    const togglemodallongpress = () => {
-        setchatmodallongpress(!chatmodallongpress)
+    const toggleModalLongPress = () => {
+        setChatModalLongPress(!chatModalLongPress)
     }
 
     const handleSend = () => {
         if (inputText.trim().length > 0) {
-            const newMsg: Item = {
+            const newMsg: IMessage = {
                 _id: messageIdCounter.current,
                 text: inputText.trim(),
                 createdAt: new Date(),
@@ -124,7 +126,7 @@ const Chat = ({ navigation }: { navigation: any }) => {
                     avatar: "https://placeimg.com/140/140/any"
                 }
             };
-            const updatedMsgs = GiftedChat.append(msgs, [newMsg]);
+            const updatedMsgs:any= GiftedChat.append(msgs, [newMsg]);
             setMsgs(updatedMsgs);
             saveMessages(updatedMsgs);
             setInputText('');
@@ -132,7 +134,7 @@ const Chat = ({ navigation }: { navigation: any }) => {
         }
     };
 
-    const renderBubble = (props) => {
+    const renderBubble = (props:any) => {
         return (
             <Bubble
                 {...props}
@@ -161,7 +163,9 @@ const Chat = ({ navigation }: { navigation: any }) => {
     const textInput = () => {
         return (
             <View style={styles.header}>
-                <TouchableOpacity onPress={uploadImageFromGallery}>
+                <TouchableOpacity
+                   // onPress={uploadImageFromGallery}
+                >
                     <Image
                         source={Icons.upload}
                         style={styles.backIcon}
@@ -199,7 +203,7 @@ const Chat = ({ navigation }: { navigation: any }) => {
                     <Text style={styles.nameHeader}>{name}</Text>
                     <Text style={styles.chatSubheading}>{stringsMenu.chatSubheading}</Text>
                 </View>
-                <TouchableOpacity onPress={() => { setchatmodal(true) }} >
+                <TouchableOpacity onPress={() => { setChatModal(true) }} >
                     <Image
                         source={Icons.options}
                         style={styles.optionsButton}
@@ -213,9 +217,9 @@ const Chat = ({ navigation }: { navigation: any }) => {
                     renderBubble={renderBubble}
                     renderUsernameOnMessage={true}
                     alignTop={true}
-                    onLongPress={() => { setchatmodallongpress(true) }}
+                    onLongPress={() => { setChatModalLongPress(true) }}
                     onSend={(messages: IMessage[]) => {
-                        const updatedMsgs = GiftedChat.append(msgs, messages as Item[]);
+                        const updatedMsgs:any = GiftedChat.append(msgs, messages as IMessage[]);
                         setMsgs(updatedMsgs);
                         saveMessages(updatedMsgs);
                     }}
@@ -227,19 +231,19 @@ const Chat = ({ navigation }: { navigation: any }) => {
                 />
             </View>
             <ChatModal
-                visible={chatmodal}
-                ondismiss={togglemodal}
+                visible={chatModal}
+                ondismiss={toggleModal}
             />
             <ChatModalLongPress
-                visible={chatmodallongpress}
-                ondismiss={togglemodallongpress}
+                visible={chatModalLongPress}
+                ondismiss={toggleModalLongPress}
             />
         </SafeAreaProvider>
     )
 }
 
 export default Chat
-export default Chat
+
 
 const styles = StyleSheet.create({
     giftedChatHeader: {
